@@ -9,6 +9,3 @@
 *.exe
 valisp  # <-- si tu compiles un exécutable avec ce nom
 
-# Dossiers temporaires
-/tmp
-build/
