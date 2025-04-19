@@ -1,1 +1,0 @@
-couleurs.o: couleurs.c
