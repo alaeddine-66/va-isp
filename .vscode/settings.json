@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "functional": "c",
+        "__config": "c",
+        "tuple": "c",
+        "*.inc": "c"
+    }
+}
