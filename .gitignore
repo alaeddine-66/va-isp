@@ -1,0 +1,14 @@
+# Fichiers objets
+*.o
+
+# Fichiers de dépendance
+*.d
+
+# Binaires ou exécutables générés
+*.out
+*.exe
+valisp  # <-- si tu compiles un exécutable avec ce nom
+
+# Dossiers temporaires
+/tmp
+build/
