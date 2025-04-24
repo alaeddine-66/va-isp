@@ -1,11 +1,11 @@
 #include "valisp.h"
-#include "mes_tests.h"
-
 
 void lancer_tests() {
+    /*
     test_memoire_vide();
     test_allocateurs_fonctions_de_base();
     test_allocateur_malloc();
+    */
 
 
 

@@ -7,5 +7,6 @@
 
 void * valisp_malloc(size_t size);
 void valisp_ramasse_miettes(sexpr env);
+void valisp_ramasse_miettes_dynamiques(sexpr *pile);
 
 #endif

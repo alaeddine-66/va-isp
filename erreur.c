@@ -51,8 +51,7 @@ void afficher_erreur(void){
     printf("Fonction fautive : « %s »\n", FONCTION_ERREUR);
     printf("Valeur fautive : «");
     afficher(SEXPR_ERREUR);
-    printf("»\n");
-
+    printf("»");
 }
 
 void erreur(enum erreurs type, char* fonction, char * explication, sexpr s){
@@ -60,6 +59,7 @@ void erreur(enum erreurs type, char* fonction, char * explication, sexpr s){
     FONCTION_ERREUR =fonction;
     MESSAGE_ERREUR = explication;
     TYPE_ERREUR = type;
-    afficher_erreur();
-    exit(1);
+    
+    longjmp(*jump_buffer(), 1);
+
 }

@@ -158,7 +158,7 @@ void ramasse_miette_liberer() {
   int next;
   int i;
   for (i=0;bloc_suivant(i) != i;) {
-    if(bloc_libre(i)){
+    if(bloc_libre(i)){/*++*/
       for (next=bloc_suivant(i);next != bloc_suivant(next) && bloc_libre(next); next=bloc_suivant(next));
       MEMOIRE_DYNAMIQUE[i] = cons_bloc(0, bloc_precedant(i), 0, next);
       MEMOIRE_DYNAMIQUE[next] = cons_bloc(0,i,usage_bloc(next),bloc_suivant(next));

@@ -7,6 +7,11 @@
 sexpr environnement_global(void);
 void initialiser_memoire(void);
 
+void initialiser_pile();
+sexpr * pile_globale();
+void ajout_pile(sexpr p);
+int get_HAUT();
+
 int trouver_variable(sexpr env, sexpr variable, sexpr *resultat);
 int modifier_variable(sexpr env, sexpr variable, sexpr valeur);
 void definir_variable_globale(sexpr variable, sexpr valeur);

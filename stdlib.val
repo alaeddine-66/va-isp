@@ -1,0 +1,283 @@
+;; Bibliothèque standard de Valisp
+;;
+;; Cette série de définitions permet de rendre le langage plus simple
+;; à utiliser. Il est composé de deux parties. La première partie ne
+;; nécessite que les primitives de bases :
+;;
+;; - car
+;; - cdr
+;; - cons
+;; - quote
+;; - lambda
+;; - macro
+;; - if
+;; - defvar
+;; - eq
+;; - <
+;; - +
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                            ;;
+;;  Fondamentaux du langage   ;;
+;;                            ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defvar list
+  (lambda args args))
+
+
+(defvar defmacro (macro liste
+                     (list 'defvar
+                           (car liste)
+                           (cons 'macro
+                                 (cons (car (cdr liste))
+                                       (cdr (cdr liste)))))))
+
+
+(defvar defun (macro liste
+                     (list 'defvar
+                           (car liste)
+                           (cons 'lambda
+                                 (cons (car (cdr liste))
+                                       (cdr (cdr liste)))))))
+
+
+;;;;;;;;;;;;;;;;;;;;
+;;                ;;
+;;  Utilitaires   ;;
+;;                ;;
+;;;;;;;;;;;;;;;;;;;;
+
+
+(defmacro exemple list nil)
+
+
+(defmacro info (x)
+  (list 'println
+        (list quote x)
+        " = "
+        x))
+
+(exemple
+
+ (+ (* 3 1)
+    (info (* 2 10))
+    (* 7 100))
+
+ nil)
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                ;;
+;;  Opérateurs booléens basiques  ;;
+;;                                ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun not (b)
+  "Calcule la négation du paramètre"
+  (if b nil t))
+
+;; On utilise une macro pour permettre l’évalutation paresseuse
+(defmacro and (a b)
+  "Calcule de manière paresseuse le « et logique » entre a et b"
+  (list 'if a b nil))
+
+;; On utilise une macro pour permettre l’évalutation paresseuse
+(defmacro or (a b)
+  "Calcule de manière paresseuse le « ou logique » entre a et b"
+  (list 'if a a b))
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                        ;;
+;;  Comparaison d’entier  ;;
+;;                        ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Je n’utilise pas or pour gagner en légèreté et n’utiliser que des primitives
+
+(defun <= (a b)
+  "Teste si a ≤ b : a et b doivent être entier"
+  (if (= a b) t (< a b)))
+
+(defun > (a b)
+  "Teste si a > b : a et b doivent être entier"
+  (if (= a b) nil) (< b a))
+
+(defun >= (a b)
+  "Teste si a ≥ b : a et b doivent être entier"
+  (if (< a b) nil t))
+
+(defun /= (a b)
+  "Test si a≠b : a et b sont de types quelconques"
+  (if (= a b) nil t))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                ;;
+;;  Macro définissant des blocs   ;;
+;;                                ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+(defmacro let liste
+  ;; (car liste) -> ((x 1) (y 2) (z 3))
+  ;; (cdr liste) -> (ligne1 ligne2 ligne3)
+  (cons (cons 'lambda                         ; => ((lambda
+              (cons (map car (car liste))     ; =>    (x y z)
+                    (cdr liste)))             ; =>    ligne1 ligne2 ligne3))
+        (map cadr (car liste))))
+
+
+
+(defmacro progn liste
+  (if (cdr liste)
+      (list (cons 'lambda
+                  (cons nil
+                        liste)))
+    (car liste)))
+
+
+
+
+
+(defmacro when liste
+    (list 'if
+          (car liste)
+          (cons 'progn (cdr liste))
+          nil))
+
+
+
+(defmacro unless liste
+    (list 'if
+          (car liste)
+          nil
+          (cons 'progn (cdr liste))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                ;;
+;;  Inutiles donc indispendables  ;;
+;;                                ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Si car est le premier élement d’une liste, cadr en est le second,
+;; caddr le troisième, etc.
+
+(defun cadr (liste)
+  "second élement de la liste"
+  (car (cdr liste)))
+
+(defun caddr (liste)
+  "troisième élement de la liste"
+  (car (cdr (cdr liste))))
+
+(defun cadddr (liste)
+  "quatrième élement de la liste"
+  (car (cdr (cdr (cdr liste)))))
+
+(defun caddddr (liste)
+  "cinquième élement de la liste"
+  (car (cdr (cdr (cdr (cdr liste))))))
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                            ;;
+;;  Fonctions sur les listes  ;;
+;;                            ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun length (liste)
+  (if liste
+      (+ 1 (length (cdr liste)))
+    0))
+
+
+(defun map (fonction liste)
+  (if liste
+      (cons (fonction (car liste))
+            (map fonction (cdr liste)))
+    nil))
+
+
+(defun elt (liste n)
+  (if (= 0 n )
+      (car liste)
+    (elt (cdr liste) (- n 1))))
+
+
+(defun append (L1 L2)
+  (if L1
+      (cons (car L1)
+            (append (cdr L1) L2))
+    L2))
+
+
+(defun list* liste
+  (let ((aux (lambda (liste)
+               (if liste
+                   (if (cdr liste)
+                       (cons (car liste) (aux (cdr liste)))
+                     (car liste))
+                 nil))))
+    (aux liste)))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                  ;;
+;;  La meta-macro qui déchire !!!   ;;
+;;                                  ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun macro->lambda (liste)
+  (cons 'lambda (cdr liste)))
+
+
+(defmacro expand-macro (liste)
+  (cons 'apply
+        (cons (list 'macro->lambda (car liste))
+              (list (list 'quote
+                          (map (lambda (x) (cons 'quote (list x))) (cdr liste)))))))
+
+
+
+(exemple
+
+ (expand-macro
+  (and a b))
+
+ (expand-macro
+  (let ((x 1)
+        (y 2)
+        (z 3))
+    ligne1
+    ligne2
+    ligne3))
+
+ (expand-macro
+  (expand-macro
+   (nom ligne1
+        ligne2
+        ligne3)))
+
+
+ nil)

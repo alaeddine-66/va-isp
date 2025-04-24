@@ -29,18 +29,20 @@ void charger_primitives() {
   
   charger_une_primitive("eval",     eval_valisp);
   charger_une_primitive("apply",    apply_valisp);
-  /*
   charger_une_primitive("car",      car_valisp);
   charger_une_primitive("cdr",      cdr_valisp);
   charger_une_primitive("cons",     cons_valisp);
-  */
   charger_une_primitive("+",        add_valisp);
+  charger_une_primitive("=",        equal_valisp);
+  charger_une_primitive("if",       if_valisp);
+  charger_une_primitive("for",      for_valisp);
+  charger_une_primitive("liste",    liste_valisp);
+
   /*
   charger_une_primitive("-",        sub_valisp);
   charger_une_primitive("*",        produit_valisp);
   charger_une_primitive("/",        div_valisp);
   charger_une_primitive("%",        mod_valisp);
-  charger_une_primitive("=",        equal_valisp);
   charger_une_primitive("<",        less_than_valisp);
   charger_une_primitive("print",    print_valisp);
   charger_une_primitive("println",  println_valisp);
@@ -49,6 +51,10 @@ void charger_primitives() {
 
   charger_une_speciale("defvar",  defvar_valisp);
   charger_une_speciale("setq",    setq_valisp);
+  charger_une_speciale("quote", quote_valisp);
+  charger_une_speciale("lambda",  lambda_valisp);
+  charger_une_speciale("macro",  macro_valisp);
+
 
 }
 
@@ -97,8 +103,6 @@ void repl_env() {
       afficher_env(environnement_global());
       printf("\n\n");
 }
-
-
 
 int repl() {
   char* invite_defaut = "\001\033[1;33m\002vaλisp>\001\033[1;0m\002 ";
@@ -158,7 +162,6 @@ int repl() {
 
           /* On a réussi à lire l’expression, on peut l’évaluer */
 
-
 	        /* Tout ce que valisp affichera sera en bleu*/
           printf("%s",couleur_bleu);
           val = eval(val,environnement_global()); /* EVAL */
@@ -173,6 +176,7 @@ int repl() {
       } else {
           /* Si on rencontre une « exception » */
           printf("%s",couleur_rouge);
+          POSITION=0;
           afficher_erreur();
           printf("%s",couleur_defaut);
       }
@@ -245,6 +249,7 @@ int valisp_main(int argc, char *argv[]) {
 
 
     afficher_banniere();
+    initialiser_pile();
 
     printf("Initialisation mémoire");
     initialiser_memoire();

@@ -1,7 +1,7 @@
 .PHONY: debug
 
 CC = gcc
-OPTIONS = -Wall -ansi -pedantic
+OPTIONS = -Wall -ansi -pedantic -g
 BIBLIO=-lreadline
 DEBUG_OPTIONS =
 EXECUTABLE = valisp

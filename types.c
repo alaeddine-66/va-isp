@@ -28,10 +28,8 @@ char* chaine_vers_memoire(const char *c) {
     for (i = 0; i < strlen(c) + 1; i++) {
         p[i] = c[i]; 
     }
-
     return debut;
 }
-
 
 sexpr new_string(char * c){
   sexpr s = (sexpr) valisp_malloc(sizeof(valisp_object));
@@ -91,17 +89,12 @@ sexpr cdr(sexpr s) {
     return s->data.CONS.cdr;
 }
 
-/*
+
 bool list_p(sexpr e){
-  return e == NULL || cons_p(e) ;
-}
-*/
-bool list_p(sexpr e) {
-    while (e != NULL) {
-        if (!cons_p(e)) return 0;
-        e = cdr(e);
-    }
-    return 1;
+  if(e == NULL) return 1;
+  if(cons_p(e) && cdr(e) == NULL) return 1;
+  if(cons_p(e) && cons_p(cdr(e))) return 1;
+  return 0;
 }
 
 void set_car(sexpr e, sexpr nouvelle){
@@ -174,16 +167,18 @@ void afficher(sexpr v) {
         case couple:
             printf("(");
             afficher_liste(v);
-            printf(")  \\  ");
+            printf(")");
+            /*
             printf("(");
             afficher_liste2(v);
             printf(")");  
+            */
             break;
         case prim:
-            printf("<primitive>");
+            printf("#<primitive>");
             break;
         case spec:
-            printf("<speciale>");
+            printf("#<speciale>");
             break;
         default:
             printf("<inconnu>");

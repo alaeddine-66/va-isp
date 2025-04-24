@@ -197,7 +197,7 @@ int parseur(char *texte, int i, sexpr *res) {
         sexpr temp;
         int err = parseur(texte, i + 1, &temp);
         if (err < 0) return err; 
-        *res = cons(new_symbol("quote"), temp);
+        *res = cons(new_symbol("quote"), cons(temp,NULL));
         return err;
     }
     

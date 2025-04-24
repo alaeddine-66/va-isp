@@ -5,6 +5,25 @@
 #include "couleurs.h"
 
 sexpr ENV = NULL;
+sexpr PILE[1000];
+int HAUT = 1;
+
+void initialiser_pile(){
+    PILE[0]=ENV;
+    HAUT=1;
+}
+
+sexpr * pile_globale(){
+    return PILE;
+}
+
+void ajout_pile(sexpr ele){
+    PILE[HAUT++] = ele;
+}
+
+int get_HAUT(){
+    return HAUT;
+}
 
 
 sexpr environnement_global(void){
@@ -99,7 +118,7 @@ void afficher_env(sexpr env){
     for(curr=env;curr!=NULL; curr = cdr(curr)){
         printf("%s",couleur_bleu);
         afficher(car((car(curr))));
-        printf("%s",couleur_defaut);
+        printf("%s ",couleur_defaut);
         afficher(cdr((car(curr))));
         printf("\n");
     }
